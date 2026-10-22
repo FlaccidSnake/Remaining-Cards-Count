@@ -1,16 +1,9 @@
 {
     "name": "Card Counts Display",
     "package": "card_counts_display",
-    "author": "Your Name",
-    "version": "1.0.0",
+    "author": "FlaccidSnake",
+    "homepage": "https://github.com/FlaccidSnake/Remaining-Cards-Count/issues",
+    "version": "1.1.0",
     "description": "Displays remaining new, learning, and review card counts in a customizable popup during reviews",
-    "min_point_version": 45,
-    "max_point_version": 0,
-    "conflicts": [],
-    "mod": 0,
-    "config": {
-        "corner": "top-left",
-        "show_counts": true,
-        "font": "Minecraft.ttf"
-    }
+    "min_point_version": 45
 }

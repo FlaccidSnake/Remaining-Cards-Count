@@ -2,6 +2,7 @@
     "corner": "top-left",
     "show_counts": true,
     "show_animations": true,
+    "underline_current_card": true,
     "font": "Minecraft.ttf",
     "base_font_size": 48
 }

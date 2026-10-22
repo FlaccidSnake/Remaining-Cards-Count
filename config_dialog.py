@@ -20,6 +20,7 @@ class CardCountsConfigDialog(QDialog):
                 "corner": "top-left",
                 "show_counts": True,
                 "show_animations": True,
+                "underline_current_card": True,
                 "font": "Minecraft.ttf",
                 "base_font_size": 48
             }
@@ -27,6 +28,7 @@ class CardCountsConfigDialog(QDialog):
         self.corner = config.get("corner", "top-left")
         self.show_counts = config.get("show_counts", True)
         self.show_animations = config.get("show_animations", True)
+        self.underline_current_card = config.get("underline_current_card", True)
         self.font = config.get("font", "Minecraft.ttf")
         self.base_font_size = config.get("base_font_size", 48)
         
@@ -62,6 +64,18 @@ class CardCountsConfigDialog(QDialog):
         )
         animations_info.setWordWrap(True)
         display_layout.addWidget(animations_info)
+        
+        # Underline current card checkbox
+        self.underline_checkbox = QCheckBox("Underline the count of the current card's type")
+        self.underline_checkbox.setChecked(self.underline_current_card)
+        display_layout.addWidget(self.underline_checkbox)
+        
+        underline_info = QLabel(
+            "<i>Underlines the blue, red, or green number depending on whether "
+            "the card you're looking at is new, learning, or review</i>"
+        )
+        underline_info.setWordWrap(True)
+        display_layout.addWidget(underline_info)
         
         display_group.setLayout(display_layout)
         layout.addWidget(display_group)
@@ -205,6 +219,7 @@ class CardCountsConfigDialog(QDialog):
         config["corner"] = self.corner_combo.currentText()
         config["show_counts"] = self.show_counts_checkbox.isChecked()
         config["show_animations"] = self.show_animations_checkbox.isChecked()
+        config["underline_current_card"] = self.underline_checkbox.isChecked()
         config["font"] = self.font_combo.currentText()
         config["base_font_size"] = self.font_size_spinbox.value()
         

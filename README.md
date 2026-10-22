@@ -22,6 +22,8 @@ Access via **Tools → Card Counts Display Config...**
 - **Show card counts during reviews**: Toggle the entire display on/off
 - **Show animated +1/-1 change indicators**: Enable/disable the animated feedback
 
+- **Underline the count of the current card's type**: Underlines the blue/red/green number matching the card on screen (new/learning/review)
+
 ### Position
 - **Corner position**: Choose where the counts appear (top-left, top-right, bottom-left, bottom-right)
   - Defaults to top-left to avoid Card History Killfeed
@@ -33,3 +35,11 @@ Access via **Tools → Card Counts Display Config...**
 - **Base font size (fullscreen)**: Set the font size when window is fullscreen (12-200px, default 48px)
   - Text automatically scales down as window width decreases
   - Opacity increases dramatically when window is ≤50% of screen width, to avoid covering your cards.
+
+## Changelog
+
+  ### Version 1.0.0
+- Initial release
+
+### Version 1.1.0
+- Added underline for state of current card in reviewer

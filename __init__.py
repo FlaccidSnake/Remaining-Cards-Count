@@ -45,7 +45,7 @@ class AnimatedChangeLabel(QLabel):
 class CardCountsPopup(QWidget):
     def __init__(self):
         super().__init__(mw)
-        self.config = mw.addonManager.getConfig(__name__)
+        self.config = mw.addonManager.getConfig(__name__) or {}
         
         self.setWindowFlags(
             Qt.WindowType.Tool | 
@@ -165,8 +165,33 @@ class CardCountsPopup(QWidget):
         self.font_size = font_size
         self.opacity = opacity
         self.font_family = font_family
+    
+    def current_card_index(self):
+        """Which count the current card belongs to: 0 = new, 1 = learning, 2 = review, None = unknown"""
+        card = mw.reviewer.card if mw.reviewer else None
+        if not card:
+            return None
+        if card.queue == 0:
+            return 0
+        if card.queue in (1, 3, 4):  # learning, interday learning, preview
+            return 1
+        if card.queue == 2:
+            return 2
+        return None
+    
+    def styled_count(self, count, color, underline):
+        """Build the rich-text span for one count, optionally underlined"""
+        decoration = "underline" if underline else "none"
+        return (
+            f'<span style="color: {color}; font-family: {self.font_family}; '
+            f'font-size: {self.font_size}px; font-weight: bold; '
+            f'text-decoration: {decoration};">{count}</span>'
+        )
         
     def update_counts(self, show_animations=True):
+        # Re-read config so changes from the config dialog apply to the next card
+        self.config = mw.addonManager.getConfig(__name__) or self.config
+        
         if not mw.reviewer or not mw.reviewer.card:
             self.hide()
             return
@@ -181,6 +206,9 @@ class CardCountsPopup(QWidget):
         new_count = counts[0]
         learning_count = counts[1]
         review_count = counts[2]
+        
+        # Update styling in case window size or config changed
+        self.update_styling()
         
         # Show animations if enabled and we have previous counts
         if show_animations and self.prev_counts is not None and self.config.get("show_animations", True):
@@ -218,9 +246,6 @@ class CardCountsPopup(QWidget):
         # Store current counts for next comparison
         self.prev_counts = (new_count, learning_count, review_count)
         
-        # Update styling in case window size changed
-        self.update_styling()
-        
         # Colors: blue for new, red for learning, green for review
         new_color = "#2196f3"
         learning_color = "#ff8589"
@@ -231,16 +256,16 @@ class CardCountsPopup(QWidget):
         learning_rgba = self.hex_to_rgba(learning_color, self.opacity)
         review_rgba = self.hex_to_rgba(review_color, self.opacity)
         
+        # Underline the count matching the current card (if enabled)
+        if self.config.get("underline_current_card", True):
+            current = self.current_card_index()
+        else:
+            current = None
+        
         # Create styled text
-        self.new_label.setText(
-            f'<span style="color: {new_rgba}; font-family: {self.font_family}; font-size: {self.font_size}px; font-weight: bold;">{new_count}</span>'
-        )
-        self.learning_label.setText(
-            f'<span style="color: {learning_rgba}; font-family: {self.font_family}; font-size: {self.font_size}px; font-weight: bold;">{learning_count}</span>'
-        )
-        self.review_label.setText(
-            f'<span style="color: {review_rgba}; font-family: {self.font_family}; font-size: {self.font_size}px; font-weight: bold;">{review_count}</span>'
-        )
+        self.new_label.setText(self.styled_count(new_count, new_rgba, current == 0))
+        self.learning_label.setText(self.styled_count(learning_count, learning_rgba, current == 1))
+        self.review_label.setText(self.styled_count(review_count, review_rgba, current == 2))
         
         self.adjustSize()
         self.position_popup()
